@@ -24,6 +24,7 @@ export const config = {
             async authorize(credentials) {
                 if (credentials == null) return null;
 
+                console.log(credentials);
                 // Find user in database
                 const user = await prisma.user.findFirst({
                     where: {
