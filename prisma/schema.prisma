@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
@@ -33,7 +34,7 @@ model Product {
 
 /**
 px prisma init
-npx prisma generate
+npx prisma generate whenver change in this file.
 npx prisma migrate dev --name init
 npx prisma studio
 seed: npx tsx ./db/seed  
