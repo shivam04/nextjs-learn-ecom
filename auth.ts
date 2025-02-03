@@ -59,7 +59,7 @@ export const config = {
             session.user.role = token.role;
             session.user.name = token.name;
 
-            console.log("Session", token);
+            //console.log("Session", token);
 
             // If there is an update, set the user name
             if (trigger === 'update') {
@@ -86,7 +86,7 @@ export const config = {
                 }
             }
 
-            console.log("Token", token);
+            //console.log("Token", token);
 
             return token;
         }
