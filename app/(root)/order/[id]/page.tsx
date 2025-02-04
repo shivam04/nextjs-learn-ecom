@@ -15,8 +15,6 @@ const OrderDetailsPage = async (props: {
 
     if (!order) notFound();
 
-    console.log(order);
-
     return (
         <>Order Details {order?.user.name}</>
     );
