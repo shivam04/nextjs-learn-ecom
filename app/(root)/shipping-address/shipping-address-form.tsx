@@ -4,7 +4,7 @@ import { shippingAddressDefaultValues } from "@/lib/constants";
 import { shippingAddressSchema } from "@/lib/validators";
 import { ShippingAddress } from "@/types";
 import { useRouter } from "next/navigation";
-import { ControllerRenderProps, useForm } from "react-hook-form";
+import { ControllerRenderProps, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTransition } from "react";
@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Loader } from "lucide-react";
+import { updateUserAddress } from "@/lib/actions/user.actions";
 
 /**
  * react-hook-forms: Helps manage forms in react, takes care of managing state, submissions, validating and error messages.
@@ -31,12 +32,23 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress}) => {
         defaultValues: address || shippingAddressDefaultValues
     });
 
-    const onSubmit = (values) => {
-        console.log(values);
-        return;
-    }
+    const [isPending, startTransition] = useTransition();
 
-    const [isPending, stateTransition] = useTransition();
+    const onSubmit:SubmitHandler<z.infer<typeof shippingAddressSchema>> = (values) => {
+        startTransition(async () => {
+            const res = await updateUserAddress(values);
+            
+            if (!res.success) {
+                toast({
+                    variant: 'destructive',
+                    description: res.message
+                });
+                return;
+            }
+
+            router.push('/payment-method');
+        });
+    }
 
     return ( 
         <>
