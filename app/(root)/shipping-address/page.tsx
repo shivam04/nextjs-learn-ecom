@@ -24,7 +24,6 @@ const ShippingAddressPage = async () => {
 
     const user = await getUserById(userId);
 
-
     return (
         <>
             <CheckoutSteps current={1} />
