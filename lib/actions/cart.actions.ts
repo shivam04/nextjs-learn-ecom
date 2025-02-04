@@ -49,7 +49,6 @@ export async function addItemToCart(data: CartItem) {
         });
 
         if (!product) throw new Error('Product not found');
-        console.log((cart?.items))
 
         if (!cart) {
             // const create new cart object
@@ -143,4 +142,55 @@ export async function getMyCart() {
         shippingPrice: cart.shippingPrice.toString(),
         taxPrice: cart.taxPrice.toString()
     });
+}
+
+export async function removeItemFromCart(productId: string) {
+    try {
+        // Check for cart cookie
+        const sessionCartId = (await cookies()).get('sessionCartId')?.value;
+        if (!sessionCartId) throw new Error('Cart session not found');
+
+        // Find product in database
+        const product = await prisma.product.findFirst({
+            where: {id: productId}
+        });
+        if (!product) throw new Error('Product not found');
+
+        // Get User Cart
+        const cart = await getMyCart();
+        if (!cart) throw new Error('Cart not found');
+
+        const existItem = (cart.items as CartItem[]).find((x) => x.productId === productId);
+        if (!existItem) throw new Error('Item not found');
+
+        // check if quantity is 1
+        if (existItem.qty === 1) {
+            // Remove from the cart
+            cart.items = (cart.items as CartItem[]).filter((x) => x.productId !== existItem.productId);
+        } else {
+            // Decrease quantity
+            (cart.items as CartItem[]).find((x) => x.productId === productId)!.qty = existItem.qty - 1;
+        }
+
+        // update items in the db
+        await prisma.cart.update({
+            where: { id: cart.id },
+            data: {
+                items: cart.items as Prisma.CartUpdateitemsInput[],
+                ...calcPrice(cart.items as CartItem[])
+            }
+        });
+
+        revalidatePath(`/product/${product.slug}`);
+        return {
+            success: true,
+            message: `${product.name} was removed from the cart`
+        }
+
+    } catch(error) {
+        return {
+            success: false,
+            message: formatError(error)
+        }
+    }
 }
