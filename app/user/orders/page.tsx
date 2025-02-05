@@ -56,7 +56,7 @@ const OrdersPage = async (props: {
                         ))}
                     </TableBody>
                 </Table>
-                { orders.totalPage >= 1 && (
+                { orders.totalPage > 1 && (
                     <Pagination 
                         page={ Number(page) || 1 }
                         totalPages={orders.totalPage}
