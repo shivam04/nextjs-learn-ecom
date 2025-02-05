@@ -1,3 +1,4 @@
+import Pagination from "@/components/shared/pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getMyOrders } from "@/lib/actions/order.action";
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
@@ -55,6 +56,12 @@ const OrdersPage = async (props: {
                         ))}
                     </TableBody>
                 </Table>
+                { orders.totalPage >= 1 && (
+                    <Pagination 
+                        page={ Number(page) || 1 }
+                        totalPages={orders.totalPage}
+                    />
+                )}
             </div>
         </div>
     );
