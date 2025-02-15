@@ -33,19 +33,15 @@ export async function getAllProducts({
     page: number;
     category?: string;
 }) {
-    try {
-        const data = await prisma.product.findMany({
-            skip: (page - 1) * limit,
-            take: limit
-        });
+    const data = await prisma.product.findMany({
+        skip: (page - 1) * limit,
+        take: limit
+    });
 
-       const dataCount = await prisma.product.count();
+    const dataCount = await prisma.product.count();
 
-       return {
-            data,
-            totalPage: Math.ceil(dataCount/limit)
-        } 
-    } catch (error) {
-        return { success: false, message: formatError(error) };
-    }
+    return {
+        data,
+        totalPage: Math.ceil(dataCount/limit)
+    } 
 }
