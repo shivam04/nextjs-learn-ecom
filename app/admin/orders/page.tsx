@@ -1,7 +1,9 @@
 import { auth } from "@/auth";
+import DeleteDialog from "@/components/shared/delete-dialog";
 import Pagination from "@/components/shared/pagination";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { getAllOrders } from "@/lib/actions/order.action";
+import { deleteOrder, getAllOrders } from "@/lib/actions/order.action";
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -55,9 +57,10 @@ const AdminOrdersPage = async (props: {
                                         ? formatDateTime(order.deliveredAt).dateTime : 'Not Delivered' }
                                 </TableCell>
                                 <TableCell>
-                                    <Link href={`/order/${order.id}`}>
-                                        <span className="px-2">Details</span>
-                                    </Link>
+                                    <Button asChild variant='outline' size='sm'>
+                                        <Link href={`/order/${order.id}`}>Details</Link>
+                                    </Button>
+                                    <DeleteDialog id={order.id} action={deleteOrder} />
                                 </TableCell>
                             </TableRow>
                         ))}
