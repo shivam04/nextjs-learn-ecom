@@ -1,7 +1,8 @@
+import DeleteDialog from "@/components/shared/delete-dialog";
 import Pagination from "@/components/shared/pagination";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { getAllProducts } from "@/lib/actions/product.actions";
+import { deleteProduct, getAllProducts } from "@/lib/actions/product.actions";
 import { formatCurrency, formatId, formatNumber } from "@/lib/utils";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -26,7 +27,7 @@ const AdminProductsPage = async (props: {
     const products = await getAllProducts({
         query: searchText,
         page: page,
-        limit: 2,
+        limit: 12,
         category: category
     });
 
@@ -61,9 +62,9 @@ const AdminProductsPage = async (props: {
                             <TableCell>{product.rating}</TableCell>
                             <TableCell className='flex gap-1'>
                                 <Button asChild variant='outline' size='sm'>
-                                    <Link href={`admin/products/${product.id}`}>Edit</Link>
+                                    <Link href={`/admin/products/${product.id}`}>Edit</Link>
                                 </Button>
-                                {/* DELETE */}
+                                <DeleteDialog id={product.id} action={deleteProduct} />
                             </TableCell>
                         </TableRow>
                     ))}
