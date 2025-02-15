@@ -70,7 +70,7 @@ const AdminProductsPage = async (props: {
                     ))}
                 </TableBody>
             </Table>
-            { products.totalPage && products.totalPage > 1 && (
+            { products.totalPage > 1 && (
                 <Pagination page={page} totalPages={products.totalPage} />
             )}
         </div>
