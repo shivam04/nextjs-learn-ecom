@@ -25,8 +25,8 @@ model Product {
   stock Int
   price Decimal @default(0) @db.Decimal(12,2)
   rating Decimal @default(0) @db.Decimal(3,2)
-  numReviews Int
-  isFeatured Boolean
+  numReviews Int @default(0)
+  isFeatured Boolean @default(false)
   banner String?
   createdAt DateTime @default(now()) @db.Timestamp(6)
   orderItem OrderItem[]
