@@ -1,12 +1,7 @@
 import ProductCard from "@/components/shared/product/product-card";
 import { Button } from "@/components/ui/button";
 import { getAllCategories, getAllProducts } from "@/lib/actions/product.actions";
-import { Metadata } from "next";
 import Link from "next/link";
-
-export const metadata: Metadata = {
-    title: 'Search Page'
-}
 
 const prices = [
     {
@@ -34,6 +29,41 @@ const prices = [
 const ratings = [4, 3, 2, 1];
 
 const sortOrders = ['newest', 'lowest', 'highest', 'rating'];
+
+export async function generateMetadata(props: {
+    searchParams: Promise<{
+        q?: string;
+        category?: string;
+        price?: string;
+        rating?: string;
+    }>
+}) {
+    const {
+        q = 'all',
+        category = 'all',
+        price = 'all',
+        rating = 'all',
+    } = await props.searchParams;
+    
+    const isQuerySet = q && q !== 'all' && q.trim() !== '';
+    const isCategorySet = category && category !== 'all' && category.trim() !== '';
+    const isPriceSet = price && price !== 'all' && price.trim() !== '';
+    const isRatingSet = rating && rating !== 'all' && rating.trim() !== '';
+
+    if (isQuerySet || isCategorySet || isPriceSet || isRatingSet) {
+        return {
+            title: `
+            Search ${isQuerySet ? q : ''} 
+            ${isCategorySet ? `: Category ${category}` : ''}
+            ${isPriceSet ? `: Price ${price}` : ''}
+            ${isRatingSet ? `: Rating ${rating}` : ''}`,
+        };
+    } else {
+        return {
+            title: 'Search Products',
+        };
+    }
+}
 
 const SearchPage = async (props: {
     searchParams: Promise<{
