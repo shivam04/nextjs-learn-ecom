@@ -62,7 +62,7 @@ const UpdateUserForm = ({ user }: {
                         render={({ 
                             field 
                         }: { 
-                            filed: ControllerRenderProps<
+                            field: ControllerRenderProps<
                                     z.infer<typeof updateUserSchema>, 
                                     'email'
                                 >; 
@@ -91,7 +91,7 @@ const UpdateUserForm = ({ user }: {
                         render={({ 
                             field 
                         }: { 
-                            filed: ControllerRenderProps<
+                            field: ControllerRenderProps<
                                     z.infer<typeof updateUserSchema>, 
                                     'name'
                                 >; 
@@ -115,7 +115,7 @@ const UpdateUserForm = ({ user }: {
                         render={({ 
                             field 
                         }: { 
-                            filed: ControllerRenderProps<
+                            field: ControllerRenderProps<
                                     z.infer<typeof updateUserSchema>, 
                                     'role'
                                 >; 

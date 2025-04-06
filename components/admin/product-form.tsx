@@ -90,7 +90,7 @@ const form = useForm<z.infer<typeof insertProductSchema>>({
                         render={({ 
                             field 
                         }: { 
-                            filed: ControllerRenderProps<
+                            field: ControllerRenderProps<
                                     z.infer<typeof insertProductSchema>, 
                                     'name'
                                 >; 
@@ -111,7 +111,7 @@ const form = useForm<z.infer<typeof insertProductSchema>>({
                         render={({ 
                             field 
                         }: { 
-                            filed: ControllerRenderProps<
+                            field: ControllerRenderProps<
                                     z.infer<typeof insertProductSchema>, 
                                     'slug'
                                 >; 
@@ -145,7 +145,7 @@ const form = useForm<z.infer<typeof insertProductSchema>>({
                         render={({ 
                             field 
                         }: { 
-                            filed: ControllerRenderProps<
+                            field: ControllerRenderProps<
                                     z.infer<typeof insertProductSchema>, 
                                     'category'
                                 >; 
@@ -166,7 +166,7 @@ const form = useForm<z.infer<typeof insertProductSchema>>({
                         render={({ 
                             field 
                         }: { 
-                            filed: ControllerRenderProps<
+                            field: ControllerRenderProps<
                                     z.infer<typeof insertProductSchema>, 
                                     'brand'
                                 >; 
@@ -189,7 +189,7 @@ const form = useForm<z.infer<typeof insertProductSchema>>({
                         render={({ 
                             field 
                         }: { 
-                            filed: ControllerRenderProps<
+                            field: ControllerRenderProps<
                                     z.infer<typeof insertProductSchema>, 
                                     'price'
                                 >; 
@@ -210,7 +210,7 @@ const form = useForm<z.infer<typeof insertProductSchema>>({
                         render={({ 
                             field 
                         }: { 
-                            filed: ControllerRenderProps<
+                            field: ControllerRenderProps<
                                     z.infer<typeof insertProductSchema>, 
                                     'stock'
                                 >; 
@@ -319,7 +319,7 @@ const form = useForm<z.infer<typeof insertProductSchema>>({
                         render={({ 
                             field 
                         }: { 
-                            filed: ControllerRenderProps<
+                            field: ControllerRenderProps<
                                     z.infer<typeof insertProductSchema>, 
                                     'description'
                                 >; 
