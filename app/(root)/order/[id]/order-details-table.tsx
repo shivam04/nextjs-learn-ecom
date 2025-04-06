@@ -17,11 +17,13 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import StripePayment from "./stripe-payment";
 
-const OrderDetailsTable = ({ order, paypalClientId, isAdmin }: { 
+const OrderDetailsTable = ({ order, paypalClientId, isAdmin, stripeClientSecret }: { 
     order: Order, 
     paypalClientId: string,
     isAdmin: boolean;
+    stripeClientSecret: string | null;
 }) => {
 
     const { toast } = useToast();
@@ -227,6 +229,16 @@ const OrderDetailsTable = ({ order, paypalClientId, isAdmin }: {
                                             createOrder={handleCreatePayPalOrder} 
                                             onApprove={handleApprovePayPalOrder}/>
                                     </PayPalScriptProvider>
+                                </div>
+                            )}
+                            { /* Stripe Payment */}
+                            { !isPaid && paymentMethod === 'Stripe' && stripeClientSecret && (
+                                <div>
+                                    <StripePayment 
+                                        priceInCents={Number(order.totalPrice) * 100}
+                                        clientSecret={stripeClientSecret}
+                                        orderId={order.id}
+                                    />
                                 </div>
                             )}
                             { /* Cash on Delivery */}
