@@ -20,7 +20,7 @@ const AdminProductUpdatePage = async (props: {
     if (!product) return notFound();
 
     return ( 
-        <div className="space-y-8 max-w5xl max-auto">
+        <div className="space-y-8 max-w5xl mx-auto">
             <div className="h2-bold">
                 <ProductForm type='Update' product={product} productId = {product.id}/>
             </div>
