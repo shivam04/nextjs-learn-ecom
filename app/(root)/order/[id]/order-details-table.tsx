@@ -56,7 +56,6 @@ const OrderDetailsTable = ({ order, paypalClientId, isAdmin, stripeClientSecret 
     };
 
     const handleCreatePayPalOrder = async () => {
-        console.log(order.id);
         const res = await createPayPalOrder(order.id);
 
         if (!res.success) {
@@ -70,7 +69,6 @@ const OrderDetailsTable = ({ order, paypalClientId, isAdmin, stripeClientSecret 
     }
 
     const handleApprovePayPalOrder = async (data: { orderID: string }) => {
-        console.log('approve', order.id, data);
         const res = await approvePayPalOrder(order.id, data);
 
         toast({

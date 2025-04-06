@@ -37,7 +37,6 @@ const form = useForm<z.infer<typeof insertProductSchema>>({
         // On Create
         if (type === 'Create') {
             const res = await createProduct(values);
-            console.log("res", res);
             if (!res.success) {
                 toast({
                     variant: 'destructive',
