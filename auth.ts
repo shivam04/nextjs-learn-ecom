@@ -9,7 +9,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
 export const config = {
-    secret: process.env.NEXTAUTH_SECRET || "bjSBH+S/OVaqAV1zWEugCvGiA2iS/PayuLalBn+kx+Y=", 
+    secret: process.env.NEXTAUTH_SECRET, 
     trustHost: true, // Add this to fix UntrustedHost issue
     pages: {
         signIn: '/sign-in',
