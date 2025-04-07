@@ -3,10 +3,10 @@
 
 import { Order } from "@/types";
 import Script from "next/script";
+import { useEffect } from "react";
 
 const AmazonPayButton = ({ order }:{ order: Order }) => {
-    const renderAmazonPayButton = () => {
-        console.log("Amazon Pay Button Rendered");
+    useEffect(() => {
         if (typeof window !== "undefined" && (window as any).amazon) {
             (window as any).amazon.Pay.renderButton('#AmazonPayButton', {
                 merchantId: process.env.NEXT_PUBLIC_AMAZON_MERCHANT_ID,
@@ -44,12 +44,13 @@ const AmazonPayButton = ({ order }:{ order: Order }) => {
                     },
                     "chargePermissionType": "OneTime"
                 }
-            })
+            });
+            console.log("Amazon Pay Button Rendered");
         }
-    };
+    });
     return (
         <>
-            <Script src="https://static-na.payments-amazon.com/checkout.js" strategy='beforeInteractive' onLoad={renderAmazonPayButton}/>
+            <Script src="https://static-na.payments-amazon.com/checkout.js" strategy='beforeInteractive'/>
             <div id="AmazonPayButton"></div>
         </>
         
