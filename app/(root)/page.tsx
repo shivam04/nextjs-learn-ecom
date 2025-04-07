@@ -8,6 +8,8 @@ const HomePage = async () => {
   const latestProducts = await getLatestProducts();
   const featuredProducts = await getFeaturedProducts();
 
+  console.log(`NEXTAUTH_SECRET: ${process.env.NEXTAUTH_SECRET}`);
+
   return (
     <>
       { featuredProducts.length > 0 && <ProductCarousel data={featuredProducts} /> }
