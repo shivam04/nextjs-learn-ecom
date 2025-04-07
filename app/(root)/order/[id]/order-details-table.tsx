@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import StripePayment from "./stripe-payment";
+import AmazonPayButton from "./amazon-pay-button";
 
 const OrderDetailsTable = ({ order, paypalClientId, isAdmin, stripeClientSecret }: { 
     order: Order, 
@@ -237,6 +238,22 @@ const OrderDetailsTable = ({ order, paypalClientId, isAdmin, stripeClientSecret 
                                         clientSecret={stripeClientSecret}
                                         orderId={order.id}
                                     />
+                                </div>
+                            )}
+                            {/* AmazonPay */}
+                            { !isPaid && paymentMethod === 'AmazonPay' && (
+                                <div>
+                                    <AmazonPayButton 
+                                        order={order}
+                                    />
+                                </div>
+                            )}
+                            { /* Cash on Delivery */}
+                            { paymentMethod === 'CashOnDelivery' && (
+                                <div className="text-center">
+                                    <Badge variant='secondary'>
+                                        Cash On Delivery
+                                    </Badge>
                                 </div>
                             )}
                             { /* Cash on Delivery */}

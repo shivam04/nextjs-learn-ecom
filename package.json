@@ -12,6 +12,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@amazonpay/amazon-pay-api-sdk-nodejs": "^2.3.2",
     "@auth/prisma-adapter": "^2.7.4",
     "@hookform/resolvers": "^3.10.0",
     "@neondatabase/serverless": "^0.10.4",
