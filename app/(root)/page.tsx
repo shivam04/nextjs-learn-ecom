@@ -5,10 +5,10 @@ import { getFeaturedProducts, getLatestProducts } from "@/lib/actions/product.ac
 
 const HomePage = async () => {
 
+  console.log(`NEXTAUTH_SECRET: ${process.env.NEXTAUTH_SECRET}`);
+
   const latestProducts = await getLatestProducts();
   const featuredProducts = await getFeaturedProducts();
-
-  console.log(`NEXTAUTH_SECRET: ${process.env.NEXTAUTH_SECRET}`);
 
   return (
     <>
