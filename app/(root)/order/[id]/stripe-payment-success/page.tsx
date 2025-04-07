@@ -23,6 +23,8 @@ const SuccessPage = async (props: {
 
     // Retrive Payment Intent
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    
+    console.log("paymentIntent", JSON.stringify(paymentIntent));
 
     const isSuccess = paymentIntent.status === "succeeded";
 
