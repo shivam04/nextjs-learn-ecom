@@ -7,8 +7,8 @@ import Script from "next/script";
 const AmazonPayButton = ({ order }:{ order: Order }) => {
     const renderAmazonPayButton = () => {
         console.log("Amazon Pay Button Rendered");
-        if (typeof window !== "undefined" && window.amazon) {
-            window.amazon.Pay.renderButton('#AmazonPayButton', {
+        if (typeof window !== "undefined" && (window as any).amazon) {
+            (window as any).amazon.Pay.renderButton('#AmazonPayButton', {
                 merchantId: process.env.NEXT_PUBLIC_AMAZON_MERCHANT_ID,
                 publicKeyId: process.env.NEXT_PUBLIC_AMAZON_PUBLIC_KEY_ID,
                 ledgerCurrency: 'USD',
