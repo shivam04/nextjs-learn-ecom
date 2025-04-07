@@ -4,21 +4,14 @@
 import { Order } from "@/types";
 import Script from "next/script";
 import { useEffect } from "react";
+import fs from 'fs';
+import { AmazonPayClient } from '@amazonpay/amazon-pay-api-sdk-nodejs';
 
 const AmazonPayButton = ({ order }:{ order: Order }) => {
     useEffect(() => {
         if (typeof window !== "undefined" && (window as any).amazon) {
-            (window as any).amazon.Pay.renderButton('#AmazonPayButton', {
-                merchantId: process.env.NEXT_PUBLIC_AMAZON_MERCHANT_ID,
-                publicKeyId: process.env.NEXT_PUBLIC_AMAZON_PUBLIC_KEY_ID,
-                ledgerCurrency: 'USD',
-                sandbox: true,
-                checkoutLanguage: 'en_US',
-                productType: 'PayAndShip',
-                placement: 'Cart',
-                buttonColor: 'Gold',
-                checkoutSessionConfig: {
-                    "webCheckoutDetails": {
+            const payLoad = {
+              "webCheckoutDetails": {
                         "checkoutReviewReturnUrl": `${process.env.NEXT_PUBLIC_SERVER_URL}/order/${order.id}/checkout-review`,
                         "checkoutResultReturnUrl": `${process.env.NEXT_PUBLIC_SERVER_URL}/order/${order.id}/checkout-result`,
                         "checkoutMode": "ProcessOrder",
@@ -42,7 +35,34 @@ const AmazonPayButton = ({ order }:{ order: Order }) => {
                         "phoneNumber": "234-345-2345",
                         "state": "CA"
                     },
-                    "chargePermissionType": "OneTime"
+                    "chargePermissionType": "OneTime"  
+            };
+
+            const config = {
+                publicKeyId: process.env.NEXT_PUBLIC_AMAZON_PUBLIC_KEY_ID,
+                privateKey: fs.readFileSync('tst/private.pem'),
+                region: 'us',
+                sandbox: true,
+                algorithm: 'AMZN-PAY-RSASSA-PSS-V2'
+            };
+
+            const testPayClient = new AmazonPayClient(config);
+
+            const signature = testPayClient.generateButtonSignature(payLoad);
+
+            (window as any).amazon.Pay.renderButton('#AmazonPayButton', {
+                merchantId: process.env.NEXT_PUBLIC_AMAZON_MERCHANT_ID,
+                publicKeyId: process.env.NEXT_PUBLIC_AMAZON_PUBLIC_KEY_ID,
+                ledgerCurrency: 'USD',
+                sandbox: true,
+                checkoutLanguage: 'en_US',
+                productType: 'PayAndShip',
+                placement: 'Cart',
+                buttonColor: 'Gold',
+                checkoutSessionConfig: {
+                    payLoad: payLoad,
+                    algorithm : 'AMZN-PAY-RSASSA-PSS-V2',
+                    signature: signature,
                 }
             });
             console.log("Amazon Pay Button Rendered");
