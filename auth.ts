@@ -9,6 +9,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
 export const config = {
+    trustHost: true, // Add this to fix UntrustedHost issue
     pages: {
         signIn: '/sign-in',
         error: '/sign-in',
