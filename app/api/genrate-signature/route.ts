@@ -12,7 +12,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     let privateKey = null;
 
     try {
-        const data = await secretsManager.getSecretValue({ SecretId: "apayPrivateKey" }).promise();
+        const data = await secretsManager.getSecretValue({ SecretId: "apay-private-key" }).promise();
         if (data.SecretString) {
             privateKey = data.SecretString;  // The private key in PEM format
         } else {
