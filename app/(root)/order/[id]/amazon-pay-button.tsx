@@ -2,7 +2,6 @@
 'use client';
 
 import { Order } from "@/types";
-import Script from "next/script";
 import { useEffect } from "react";
 
 const AmazonPayButton = ({ order }:{ order: Order }) => {
@@ -61,7 +60,6 @@ const AmazonPayButton = ({ order }:{ order: Order }) => {
     });
     return (
         <>
-            <Script src="https://static-na.payments-amazon.com/checkout.js" strategy='beforeInteractive'/>
             <div id="AmazonPayButton"></div>
         </>
         
