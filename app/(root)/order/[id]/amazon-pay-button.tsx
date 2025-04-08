@@ -9,30 +9,16 @@ const AmazonPayButton = ({ order }:{ order: Order }) => {
         if (typeof window !== "undefined" && (window as any).amazon) {
             const payLoad = {
               "webCheckoutDetails": {
-                        "checkoutReviewReturnUrl": `${process.env.NEXT_PUBLIC_SERVER_URL}/order/${order.id}/checkout-review`,
-                        "checkoutResultReturnUrl": `${process.env.NEXT_PUBLIC_SERVER_URL}/order/${order.id}/checkout-result`,
-                        "checkoutMode": "ProcessOrder",
-                    },
-                    "storeId": process.env.NEXT_PUBLIC_AMAZON_STORE_ID,
-                    "scopes": ["name", "email", "phoneNumber", "billingAddress"],
-                    "paymentDetails": {
-                        "paymentIntent": "Confirm",
-                        "canHandlePendingAuthorization": "false",
-                        "chargeAmount": {
-                            "amount": order.totalPrice,
-                            "currencyCode": "USD"
-                        },
-                    },
-                    "addressDetails": {
-                        "name": order.shippingAddress.fullName,
-                        "addressLine1": order.shippingAddress.streetAddress,
-                        "city": order.shippingAddress.city,
-                        "postalCode": order.shippingAddress.postalCode,
-                        "countryCode": "US",
-                        "phoneNumber": "234-345-2345",
-                        "state": "CA"
-                    },
-                    "chargePermissionType": "OneTime"  
+                    "checkoutReviewReturnUrl": `${process.env.NEXT_PUBLIC_SERVER_URL}/order/${order.id}/checkout-review`,
+                    "checkoutResultReturnUrl": `${process.env.NEXT_PUBLIC_SERVER_URL}/order/${order.id}/checkout-result`,
+                },
+                "storeId": process.env.NEXT_PUBLIC_AMAZON_STORE_ID,
+                "scopes": ["name", "email", "phoneNumber", "billingAddress"],
+                "paymentDetails": {
+                    "paymentIntent": "Confirm",
+                    "canHandlePendingAuthorization": "false",
+                },
+                "chargePermissionType": "OneTime"  
             };
 
             fetch('/api/genrate-signature', {

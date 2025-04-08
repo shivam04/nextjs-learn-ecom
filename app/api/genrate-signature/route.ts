@@ -20,14 +20,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const payload = await req.json();
     let privateKey = null;
 
-    console.log("AWS Credentials:", AWS.config.credentials);
-
 
     try {
         const data = await secretsManager.getSecretValue({ SecretId: "apay-private-key" }).promise();
         if (data.SecretString) {
             privateKey = data.SecretString;  // The private key in PEM format
-            console.log("privateKey:", privateKey);
         } else {
             privateKey = getPrivateKeyFromFile();
         }
