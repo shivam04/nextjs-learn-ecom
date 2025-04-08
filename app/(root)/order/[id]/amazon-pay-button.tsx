@@ -2,10 +2,11 @@
 'use client';
 
 import { Order } from "@/types";
+import Script from "next/script";
 import { useEffect } from "react";
 
 const AmazonPayButton = ({ order }:{ order: Order }) => {
-    useEffect(() => {
+    const loadApayButton = () => {
         if (typeof window !== "undefined" && (window as any).amazon) {
             const payLoad = {
               "webCheckoutDetails": {
@@ -57,9 +58,14 @@ const AmazonPayButton = ({ order }:{ order: Order }) => {
                 console.log("Amazon Pay Button Rendered");
             });
         }
-    });
+    };
     return (
         <>
+            <Script
+              src="https://static-na.payments-amazon.com/checkout.js"
+              strategy="afterInteractive" // Load after the page becomes interactive
+              onLoad={loadApayButton}
+            />
             <div id="AmazonPayButton"></div>
         </>
         

@@ -8,11 +8,6 @@ export default function RootLayout({
   }>) {
     return (
       <html>
-        <link
-          rel="preload"
-          href="https://static-na.payments-amazon.com/checkout.js"
-          as="script"
-        />
         <div className="flex h-screen flex-col">
           <Header />
             <main className="flex-1 wrapper">{children}</main>
