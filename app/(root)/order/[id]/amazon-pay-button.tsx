@@ -13,6 +13,10 @@ const AmazonPayButton = ({ order }:{ order: Order }) => {
                 },
                 "storeId": process.env.NEXT_PUBLIC_AMAZON_STORE_ID,
                 "scopes": ["name", "email", "phoneNumber", "billingAddress"],
+                "paymentDetails": {
+                    "paymentIntent": "Confirm",
+                    "canHandlePendingAuthorization": "false",
+                },
                 "chargePermissionType": "OneTime"  
             };
 
@@ -29,7 +33,7 @@ const AmazonPayButton = ({ order }:{ order: Order }) => {
                     productType: 'PayAndShip',
                     placement: 'Cart',
                     buttonColor: 'Gold',
-                    checkoutSessionConfig: {
+                    createCheckoutSessionConfig: {
                         payloadJSON: payLoad,
                         algorithm : 'AMZN-PAY-RSASSA-PSS-V2',
                         signature: signature,
