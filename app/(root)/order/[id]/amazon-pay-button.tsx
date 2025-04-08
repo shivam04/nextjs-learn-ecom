@@ -34,7 +34,7 @@ const AmazonPayButton = ({ order }:{ order: Order }) => {
                     placement: 'Cart',
                     buttonColor: 'Gold',
                     createCheckoutSessionConfig: {
-                        payloadJSON: payLoad,
+                        payloadJSON: JSON.stringify(payLoad),
                         algorithm : 'AMZN-PAY-RSASSA-PSS-V2',
                         signature: signature.signature,
                     }

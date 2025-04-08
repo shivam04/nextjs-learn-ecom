@@ -1,39 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from 'fs';
-import path from 'path';
 import Client from '@amazonpay/amazon-pay-api-sdk-nodejs';
-import { formatError } from "@/lib/utils";
-import AWS from 'aws-sdk';
-
-// Ensure AWS SDK loads credentials properly
-AWS.config.update({
-    accessKeyId: process.env.AMPLIFY_AWS_ACCESS_KEY_ID, 
-    secretAccessKey: process.env.AMPLIFY_AWS_SECRET_ACCESS_KEY,
-    region: process.env.AMPLIFY_AWS_REGION || "ap-south-1",
-});
-
-
-const secretsManager = new AWS.SecretsManager();
+import getPrivateKey from "@/utils/awsSecretsManager";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const payload = await req.json();
-    let privateKey = null;
-
+    const privateKey = await getPrivateKey();
     console.log("Payload: ", payload);
-
-
-    try {
-        const data = await secretsManager.getSecretValue({ SecretId: "apay-private-key" }).promise();
-        if (data.SecretString) {
-            privateKey = data.SecretString;  // The private key in PEM format
-        } else {
-            privateKey = getPrivateKeyFromFile();
-        }
-    } catch (error) {
-        console.warn("Error reading private key file: ", formatError(error));
-        privateKey = getPrivateKeyFromFile();
-    }
 
     const config = {
         publicKeyId: process.env.NEXT_PUBLIC_AMAZON_PUBLIC_KEY_ID,
@@ -52,10 +25,4 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({
         signature: signature
     });
-}
-
-function getPrivateKeyFromFile() {
-    console.log("Falling back to local private key file.");
-    const keyPath = path.join(process.cwd(), 'tst', 'private.pem');
-    return fs.readFileSync(keyPath, 'utf8');
 }

@@ -37,3 +37,34 @@ export type Review = z.infer<typeof insertReviewSchema> & {
     createdAt: Date;
     user?: { name: string; };
 };
+
+export type CheckoutShippingAddress = {
+    addressLine1?: string
+    addressLine2?: string
+    addressLine3?: string
+    city?: string
+    countryCode?: string
+    name?: string       
+    phoneNumber?: string
+    postalCode?: string
+    stateOrRegion?: string
+};
+
+export type CheckoutBuyer = {
+    buyerId?: string
+    email?: string
+    name?: string
+    phoneNumber?: string
+    primeMembershipTypes?: boolean
+};
+
+export type CheckoutPaymentPreferences = {
+    paymentDescriptor?: string
+};
+
+export type CheckoutSessionObject = {
+    checkoutSessionId: string;
+    shippingAddress?: CheckoutShippingAddress;
+    buyer?: CheckoutBuyer;
+    paymentPreferences?: CheckoutPaymentPreferences[]
+}
