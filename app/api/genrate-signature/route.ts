@@ -3,8 +3,15 @@ import fs from 'fs';
 import path from 'path';
 import Client from '@amazonpay/amazon-pay-api-sdk-nodejs';
 import { formatError } from "@/lib/utils";
-import { SecretsManager } from 'aws-sdk';
-const secretsManager = new SecretsManager();
+import AWS from 'aws-sdk';
+
+// Ensure AWS SDK loads credentials properly
+AWS.config.update({
+    region: process.env.AWS_REGION || "ap-south-1",
+});
+
+
+const secretsManager = new AWS.SecretsManager();
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
 
