@@ -3,7 +3,6 @@
 
 import { Order } from "@/types";
 import Script from "next/script";
-import { useEffect } from "react";
 
 const AmazonPayButton = ({ order }:{ order: Order }) => {
     const loadApayButton = () => {
