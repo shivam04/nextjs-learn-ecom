@@ -36,7 +36,7 @@ const AmazonPayButton = ({ order }:{ order: Order }) => {
                     createCheckoutSessionConfig: {
                         payloadJSON: payLoad,
                         algorithm : 'AMZN-PAY-RSASSA-PSS-V2',
-                        signature: signature,
+                        signature: signature.signature,
                     }
                 });
                 console.log("Amazon Pay Button Rendered");
