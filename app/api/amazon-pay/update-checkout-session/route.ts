@@ -23,13 +23,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         try {
             const response = await testPayClient.updateCheckoutSession(amazonCheckoutSessionId, payload);
             return NextResponse.json({
-                status: 200,
+                ok: true,
                 checkoutSessionObject: response.data
             })
         } catch(error) {
             console.log("Error while calling update checkout session: ", formatError(error));
             return NextResponse.json({
-                status: 400,
+                ok: false,
                 message: `Error Occured while calling update checkout Session: ${formatError(error)}`
             })
         }

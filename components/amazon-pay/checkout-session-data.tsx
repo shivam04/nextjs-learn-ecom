@@ -83,7 +83,7 @@ const CheckoutSessionData = ({
             
             const response = await res.json();
 
-            if (response.status != 200) {
+            if (!response.ok) {
                 toast({
                     variant: 'destructive',
                     description: response.message
