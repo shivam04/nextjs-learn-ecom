@@ -4,7 +4,6 @@ import path from 'path';
 import Client from '@amazonpay/amazon-pay-api-sdk-nodejs';
 import { formatError } from "@/lib/utils";
 import { SecretsManager } from 'aws-sdk';
-import { get } from "http";
 const secretsManager = new SecretsManager();
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
