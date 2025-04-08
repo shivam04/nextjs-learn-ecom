@@ -34,7 +34,7 @@ const CheckoutSessionData = ({
             setCheckoutSessionObject(res.checkoutSessionObject);
             setIsLoading(false);
         });
-    }, []);
+    }, [amazonCheckoutSessionId]);
 
     if (isLoading) {
         return (
