@@ -23,6 +23,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         try {
             const response = await testPayClient.updateCheckoutSession(amazonCheckoutSessionId, payload);
             return NextResponse.json({
+                status: 200,
                 checkoutSessionObject: response.data
             })
         } catch(error) {

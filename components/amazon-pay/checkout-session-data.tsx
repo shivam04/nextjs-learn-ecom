@@ -7,6 +7,7 @@ import { CheckoutSessionObject, Order } from "@/types";
 import { Badge } from "../ui/badge";
 import { formatCurrency } from "@/lib/utils";
 import { Button } from "../ui/button";
+import { toast } from "@/hooks/use-toast";
 
 const CheckoutSessionData = ({
     amazonCheckoutSessionId,
@@ -80,7 +81,16 @@ const CheckoutSessionData = ({
                 })
             });
             
-            console.log(await res.json());
+            const response = await res.json();
+
+            if (response.status != 200) {
+                toast({
+                    variant: 'destructive',
+                    description: response.message
+                })
+            } else {
+                console.log(response);
+            }
         });   
     };
 
