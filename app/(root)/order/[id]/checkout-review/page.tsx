@@ -1,5 +1,7 @@
 import CheckoutSessionData from "@/components/amazon-pay/checkout-session-data";
 import { getOrderById } from "@/lib/actions/order.action";
+import { ShippingAddress } from "@/types";
+import { notFound } from "next/navigation";
 
 const CheckoutReviewPage = async (props: {
     params: Promise<{
@@ -15,11 +17,18 @@ const CheckoutReviewPage = async (props: {
 
     const order = await getOrderById(id);
 
+    if (!order) {
+        return notFound();
+    }
+
     return (
         <>
-            <CheckoutSessionData 
-                order={order} 
+        <CheckoutSessionData 
                 amazonCheckoutSessionId={amazonCheckoutSessionId}
+                order={{
+                    ...order,
+                    shippingAddress: order.shippingAddress as ShippingAddress
+                }}
             />
         </>
     );
