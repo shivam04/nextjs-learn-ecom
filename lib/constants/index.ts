@@ -54,3 +54,8 @@ export const reviewFormDefaultValues = {
     comment: '',
     rating: 0,
 }
+
+export enum AMAZON_PAY_CHECKOUT_PAGE {
+    REVIEW_PAGE = 'reviewPage',
+    RESULT_PAGE = 'resultPage'
+}

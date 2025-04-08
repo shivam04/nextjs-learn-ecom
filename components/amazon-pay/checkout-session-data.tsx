@@ -8,13 +8,17 @@ import { Badge } from "../ui/badge";
 import { formatCurrency } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { toast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { AMAZON_PAY_CHECKOUT_PAGE } from "@/lib/constants";
 
 const CheckoutSessionData = ({
     amazonCheckoutSessionId,
-    order
+    order,
+    checkoutType
 }: {
     amazonCheckoutSessionId: string;
-    order: Order
+    order: Order;
+    checkoutType: AMAZON_PAY_CHECKOUT_PAGE
 }) => {
 
     const [checkoutSessionObject, setCheckoutSessionObject] = useState<CheckoutSessionObject>({
@@ -23,6 +27,12 @@ const CheckoutSessionData = ({
     const [isLoading, setIsLoading] = useState(true);
 
     const [isPending, startTransition] = useTransition();
+
+    const router = useRouter();
+
+    if (order.isPaid || order.isDelivered) {
+        router.push(`/order/${order.id}`);
+    }
 
     useEffect(() => {
         fetch('/api/amazon-pay/get-checkout-session', {
@@ -33,6 +43,7 @@ const CheckoutSessionData = ({
         .then((res) => {
             console.log(res.checkoutSessionObject);
             setCheckoutSessionObject(res.checkoutSessionObject);
+            localStorage.setItem(amazonCheckoutSessionId, JSON.stringify(checkoutSessionObject.buyer || {}));
             setIsLoading(false);
         });
     }, [amazonCheckoutSessionId]);
@@ -96,6 +107,41 @@ const CheckoutSessionData = ({
             }
         });   
     };
+
+    const handleCompleteClick = () => {
+        startTransition(async () => {
+            const payload = {
+                "chargeAmount": {
+                    "amount": order.totalPrice,
+                    "currencyCode": "USD"
+                }
+            }
+            
+            const res = await fetch('/api/amazon-pay/complete-checkout-session', {
+                method: 'POST',
+                body: JSON.stringify({
+                    payload: payload,
+                    amazonCheckoutSessionId: amazonCheckoutSessionId,
+                    orderId: order.id,
+                    email: JSON.parse(localStorage.getItem(amazonCheckoutSessionId) || "{}")?.email
+                })
+            });
+            
+            const response = await res.json();
+
+            if (!response.ok) {
+                toast({
+                    variant: 'destructive',
+                    description: response.message
+                })
+            } else {
+                setCheckoutSessionObject(response.checkoutSessionObject);
+                console.log(checkoutSessionObject);
+                localStorage.removeItem(amazonCheckoutSessionId);
+                router.push(`/order/${order.id}`);
+            }
+        })
+    }
 
     return (
         <>
@@ -174,13 +220,27 @@ const CheckoutSessionData = ({
                             <div>Total</div>
                             <div>{  formatCurrency(order.totalPrice)}</div>
                         </div>
-                        <Button 
-                            variant='default' 
-                            onClick={handleClick}
-                            disabled={isPending}
-                        >
-                            { isPending ? 'processing....' : 'Place Order'}
-                        </Button>
+                        {/* Review Page Button*/}
+                        { checkoutType === AMAZON_PAY_CHECKOUT_PAGE.REVIEW_PAGE && (
+                            <Button 
+                                variant='default' 
+                                onClick={handleClick}
+                                disabled={isPending}
+                            >
+                                { isPending ? 'processing....' : 'Place Order'}
+                            </Button>
+                        )}
+
+                        { checkoutType === AMAZON_PAY_CHECKOUT_PAGE.RESULT_PAGE && (
+                            <Button 
+                                variant='default' 
+                                onClick={handleCompleteClick}
+                                disabled={isPending}
+                            >
+                                { isPending ? 'processing....' : 'Complete Order'}
+                            </Button>
+                        )}
+                        
                     </CardContent>
                 </Card>
 
