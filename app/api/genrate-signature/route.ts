@@ -20,6 +20,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const payload = await req.json();
     let privateKey = null;
 
+    console.log("Payload: ", payload);
+
 
     try {
         const data = await secretsManager.getSecretValue({ SecretId: "apay-private-key" }).promise();
