@@ -10,7 +10,6 @@ const AmazonPayButton = ({ order }:{ order: Order }) => {
             const payLoad = {
               "webCheckoutDetails": {
                     "checkoutReviewReturnUrl": `${process.env.NEXT_PUBLIC_SERVER_URL}/order/${order.id}/checkout-review`,
-                    "checkoutResultReturnUrl": `${process.env.NEXT_PUBLIC_SERVER_URL}/order/${order.id}/checkout-result`,
                 },
                 "storeId": process.env.NEXT_PUBLIC_AMAZON_STORE_ID,
                 "scopes": ["name", "email", "phoneNumber", "billingAddress"],
