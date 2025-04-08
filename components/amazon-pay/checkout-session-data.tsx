@@ -30,11 +30,11 @@ const CheckoutSessionData = ({
 
     const router = useRouter();
 
-    if (order.isPaid || order.isDelivered) {
-        router.push(`/order/${order.id}`);
-    }
-
     useEffect(() => {
+        if (order.isPaid || order.isDelivered) {
+            router.push(`/order/${order.id}`);
+            return;
+        }
         fetch('/api/amazon-pay/get-checkout-session', {
             method: 'POST',
             body: JSON.stringify({amazonCheckoutSessionId: amazonCheckoutSessionId})
@@ -42,8 +42,9 @@ const CheckoutSessionData = ({
         .then((res) => res.json())
         .then((res) => {
             setCheckoutSessionObject(res.checkoutSessionObject);
-            console.log(res.checkoutSessionObject);
-            localStorage.setItem(amazonCheckoutSessionId, JSON.stringify(res.checkoutSessionObject.buyer || {}));
+            const checkoutSession = res.checkoutSessionObject as CheckoutSessionObject;
+            console.log(checkoutSession);
+            localStorage.setItem(amazonCheckoutSessionId, JSON.stringify(checkoutSession.buyer || {}));
             setIsLoading(false);
         });
     }, [amazonCheckoutSessionId]);
@@ -100,9 +101,10 @@ const CheckoutSessionData = ({
                 })
             } else {
                 setCheckoutSessionObject(response.checkoutSessionObject);
-                console.log(response.checkoutSessionObject);
-                if (response.checkoutSessionObject.webCheckoutDetails?.amazonPayRedirectUrl) {
-                    window.location.href = response.checkoutSessionObject.webCheckoutDetails.amazonPayRedirectUrl;
+                const checkoutSession = response.checkoutSessionObject as CheckoutSessionObject;
+                console.log(checkoutSession);
+                if (checkoutSession.webCheckoutDetails?.amazonPayRedirectUrl) {
+                    window.location.href = checkoutSession.webCheckoutDetails.amazonPayRedirectUrl;
                 }
             }
         });   
@@ -136,7 +138,8 @@ const CheckoutSessionData = ({
                 })
             } else {
                 setCheckoutSessionObject(response.checkoutSessionObject);
-                console.log(response.checkoutSessionObject);
+                const checkoutSession = response.checkoutSessionObject as CheckoutSessionObject;
+                console.log(checkoutSession);
                 localStorage.removeItem(amazonCheckoutSessionId);
                 router.push(`/order/${order.id}`);
             }
