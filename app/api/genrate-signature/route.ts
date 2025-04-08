@@ -7,8 +7,9 @@ import AWS from 'aws-sdk';
 
 // Ensure AWS SDK loads credentials properly
 AWS.config.update({
-    region: process.env.AWS_REGION || "ap-south-1",
-    credentials: new AWS.EnvironmentCredentials("AWS"), // Load from environment variables
+    accessKeyId: process.env.AMPLIFY_AWS_ACCESS_KEY_ID, 
+    secretAccessKey: process.env.AMPLIFY_AWS_SECRET_ACCESS_KEY,
+    region: process.env.AMPLIFY_AWS_REGION || "ap-south-1",
 });
 
 
