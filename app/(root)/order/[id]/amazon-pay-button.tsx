@@ -13,10 +13,6 @@ const AmazonPayButton = ({ order }:{ order: Order }) => {
                 },
                 "storeId": process.env.NEXT_PUBLIC_AMAZON_STORE_ID,
                 "scopes": ["name", "email", "phoneNumber", "billingAddress"],
-                "paymentDetails": {
-                    "paymentIntent": "Confirm",
-                    "canHandlePendingAuthorization": "false",
-                },
                 "chargePermissionType": "OneTime"  
             };
 
