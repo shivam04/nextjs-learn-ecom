@@ -41,9 +41,9 @@ const CheckoutSessionData = ({
         })
         .then((res) => res.json())
         .then((res) => {
-            console.log(res.checkoutSessionObject);
             setCheckoutSessionObject(res.checkoutSessionObject);
-            localStorage.setItem(amazonCheckoutSessionId, JSON.stringify(checkoutSessionObject.buyer || {}));
+            console.log(res.checkoutSessionObject);
+            localStorage.setItem(amazonCheckoutSessionId, JSON.stringify(res.checkoutSessionObject.buyer || {}));
             setIsLoading(false);
         });
     }, [amazonCheckoutSessionId]);
@@ -100,9 +100,9 @@ const CheckoutSessionData = ({
                 })
             } else {
                 setCheckoutSessionObject(response.checkoutSessionObject);
-                console.log(checkoutSessionObject);
-                if (checkoutSessionObject.webCheckoutDetails?.amazonPayRedirectUrl) {
-                    window.location.href = checkoutSessionObject.webCheckoutDetails.amazonPayRedirectUrl;
+                console.log(response.checkoutSessionObject);
+                if (response.checkoutSessionObject.webCheckoutDetails?.amazonPayRedirectUrl) {
+                    window.location.href = response.checkoutSessionObject.webCheckoutDetails.amazonPayRedirectUrl;
                 }
             }
         });   
@@ -136,7 +136,7 @@ const CheckoutSessionData = ({
                 })
             } else {
                 setCheckoutSessionObject(response.checkoutSessionObject);
-                console.log(checkoutSessionObject);
+                console.log(response.checkoutSessionObject);
                 localStorage.removeItem(amazonCheckoutSessionId);
                 router.push(`/order/${order.id}`);
             }
