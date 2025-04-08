@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from 'fs';
 import path from 'path';
-import { AmazonPayClient } from '@amazonpay/amazon-pay-api-sdk-nodejs';
+import Client from '@amazonpay/amazon-pay-api-sdk-nodejs';
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
     const keyPath = path.join(process.cwd(), 'tst', 'private.pem');
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         algorithm: 'AMZN-PAY-RSASSA-PSS-V2'
     };
 
-    const testPayClient = new AmazonPayClient(config);
+    const testPayClient = new Client.AmazonPayClient(config);
 
     const signature = testPayClient.generateButtonSignature(payload);
 
