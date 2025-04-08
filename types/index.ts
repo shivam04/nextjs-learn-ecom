@@ -62,9 +62,14 @@ export type CheckoutPaymentPreferences = {
     paymentDescriptor?: string
 };
 
+export type WebCheckoutDetails = {
+    amazonPayRedirectUrl?: string
+}
+
 export type CheckoutSessionObject = {
     checkoutSessionId: string;
     shippingAddress?: CheckoutShippingAddress;
     buyer?: CheckoutBuyer;
-    paymentPreferences?: CheckoutPaymentPreferences[]
+    paymentPreferences?: CheckoutPaymentPreferences[],
+    webCheckoutDetails?: WebCheckoutDetails,
 }

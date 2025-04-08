@@ -62,7 +62,6 @@ const CheckoutSessionData = ({
                 paymentDetails: {
                     paymentIntent: "Authorize",
                     canHandlePendingAuthorization: false,
-                    softDescriptor: "Descriptor",
                     chargeAmount: {
                         amount: order.totalPrice,
                         currencyCode: "USD"
@@ -89,7 +88,11 @@ const CheckoutSessionData = ({
                     description: response.message
                 })
             } else {
-                console.log(response);
+                setCheckoutSessionObject(response.checkoutSessionObject);
+                console.log(checkoutSessionObject);
+                if (checkoutSessionObject.webCheckoutDetails?.amazonPayRedirectUrl) {
+                    window.location.href = checkoutSessionObject.webCheckoutDetails.amazonPayRedirectUrl;
+                }
             }
         });   
     };
