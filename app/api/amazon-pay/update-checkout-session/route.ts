@@ -26,7 +26,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
                 checkoutSessionObject: response.data
             })
         } catch(error) {
-            console.log(error.toJSON());
             console.log("Error while calling update checkout session: ", formatError(error));
             return NextResponse.json({
                 status: 400,
