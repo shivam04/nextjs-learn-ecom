@@ -21,8 +21,8 @@ import StripePayment from "./stripe-payment";
 import AmazonPayButton from "./amazon-pay-button";
 
 const OrderDetailsTable = ({ order, paypalClientId, isAdmin, stripeClientSecret }: { 
-    order: Order, 
-    paypalClientId: string,
+    order: Omit<Order, 'paymentResult'>; 
+    paypalClientId: string;
     isAdmin: boolean;
     stripeClientSecret: string | null;
 }) => {

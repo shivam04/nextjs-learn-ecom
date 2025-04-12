@@ -59,3 +59,5 @@ export enum AMAZON_PAY_CHECKOUT_PAGE {
     REVIEW_PAGE = 'reviewPage',
     RESULT_PAGE = 'resultPage'
 }
+
+export const SENDER_EMAIL = process.env.SENDER_EMAIL || "onboarding@resend.dev"
