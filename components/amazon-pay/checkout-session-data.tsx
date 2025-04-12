@@ -17,7 +17,7 @@ const CheckoutSessionData = ({
     checkoutType
 }: {
     amazonCheckoutSessionId: string;
-    order: Order;
+    order: Omit<Order, 'paymentResult'>;
     checkoutType: AMAZON_PAY_CHECKOUT_PAGE
 }) => {
 

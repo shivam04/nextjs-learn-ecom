@@ -4,7 +4,7 @@
 import { Order } from "@/types";
 import Script from "next/script";
 
-const AmazonPayButton = ({ order }:{ order: Order }) => {
+const AmazonPayButton = ({ order }:{ order: Omit<Order, 'paymentResult'> }) => {
     const loadApayButton = () => {
         if (typeof window !== "undefined" && (window as any).amazon) {
             const payLoad = {
