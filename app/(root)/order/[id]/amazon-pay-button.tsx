@@ -51,8 +51,8 @@ const AmazonPayButton = ({ order }:{ order: Omit<Order, 'paymentResult'> }) => {
         if (typeof window !== "undefined" && (window as any).amazon) {
             (window as any).amazon.Pay.renderJSButton('#AmazonPayButton', {
                 merchantId: process.env.NEXT_PUBLIC_AMAZON_MERCHANT_ID,
-                ledgerCurrency: 'USD',
-                checkoutLanguage: 'en_US',
+                ledgerCurrency: 'JPY',
+                checkoutLanguage: 'ja_JP',
                 productType: 'PayAndShip',
                 placement: 'Cart',
                 buttonColor: 'Gold',
@@ -60,101 +60,76 @@ const AmazonPayButton = ({ order }:{ order: Omit<Order, 'paymentResult'> }) => {
                 checkoutSessionConfig: {
                     "storeId": process.env.NEXT_PUBLIC_AMAZON_STORE_ID,
                     "paymentDetails": {
-                        "paymentIntent": "AuthorizeWithCapture"
+                        "paymentIntent": "Confirm"
                     },
+                    "processorSpecifications" : {
+                        'name': 'gmopg',
+
+                    }
                 },
                 onInitCheckout: function (event: any) {
                     console.log("oninitcheckout")
-                    console.log(event);
-                    return {
-                        "totalShippingAmount": {
-                            "amount": "0.00",
-                            "currencyCode": "USD"
-                        },
-                        "totalBaseAmount": {
-                            "amount": "500.44",
-                            "currencyCode": "USD"
-                        },
-                        "totalTaxAmount": {
-                            "amount": "0.00",
-                            "currencyCode": "USD"
-                        },
-                        "totalDiscountAmount": {
-                            "amount": "400.44",
-                            "currencyCode": "USD"
-                        },
-                        "totalChargeAmount": {
-                            "amount": "100.00",
-                            "currencyCode": "USD"
-                        },
-                        "deliveryOptions": [{
-                            "id": "ups_shipping-02-25.11",
-                            "price": {
-                                "amount": "500",
-                                "currencyCode": "USD"
-                            },
-                            "shippingMethod": {
-                                "shippingMethodName": "shipping-method-name-onInitCheckout",
-                                "shippingMethodCode": "shipping-method-code-onInitCheckout"
-                            },
-                            "shippingEstimate": [{
-                                "timeUnit": "HOUR",
-                                "value": 2
-                            }],
-                            "isDefault": true
-                        }]
-                    };
+                    return onInitResponse(event);
                 },
                 onShippingAddressSelection: function (event: any) {
                     console.log(event);
+                    (window as any).shippingAddress = event['shippingAddress']
                     return {
                         "totalShippingAmount": {
-                            "amount": "0.00",
-                            "currencyCode": "USD"
+                            "amount": "0",
+                            "currencyCode": "JPY"
                         },
                         "totalBaseAmount": {
-                            "amount": "5.44",
-                            "currencyCode": "USD"
+                            "amount": "5",
+                            "currencyCode": "JPY"
                         },
                         "totalTaxAmount": {
-                            "amount": "0.00",
-                            "currencyCode": "USD"
+                            "amount": "0",
+                            "currencyCode": "JPY"
                         },
                         "totalDiscountAmount": {
-                            "amount": "4.44",
-                            "currencyCode": "USD"
+                            "amount": "4",
+                            "currencyCode": "JPY"
                         },
                         "totalChargeAmount": {
-                            "amount": "1.00",
-                            "currencyCode": "USD"
+                            "amount": "1",
+                            "currencyCode": "JPY"
                         }
                     };
                 },
                 onCompleteCheckout: function (event: any) {
                     console.log(event);
+                    (window as any).onCompleteCallbackCount = (window as any).onCompleteCallbackCount || 0;
+                    if ((window as any).onCompleteCallbackCount === 0) {
+                        const amazonPayMFAReturnUrl = event['amazonPayMFAReturnUrl'];
+                        (window as any).onCompleteCallbackCount += 1;
+                        return {"status": "redirectRequired", "redirectUrl": `http://localhost:8010?returnUrl=${amazonPayMFAReturnUrl}`};
+                    } else {
+                        return {"status": "success"}
+                    }
                 },
                 onDeliveryOptionSelection: function (event: any) {
                     console.log(event);
                     return {
                         "totalShippingAmount": {
                             "amount": "0.00",
-                            "currencyCode": "USD"
+                            "currencyCode": "JPY"
                         },
                         "totalBaseAmount": {
                             "amount": "5.44",
-                            "currencyCode": "USD"
+                            "currencyCode": "JPY"
                         },
                         "totalTaxAmount": {
                             "amount": "0.00",
-                            "currencyCode": "USD"
+                            "currencyCode": "JPY"
                         },
                         "totalDiscountAmount": {
                             "amount": "4.44",
-                            "currencyCode": "USD"
+                            "currencyCode": "JPY"
                         },
                         "totalChargeAmount": {
                             "amount": "1.00",
-                            "currencyCode": "USD"
+                            "currencyCode": "JPY"
                         }
                     };
                 },
@@ -171,7 +146,7 @@ const AmazonPayButton = ({ order }:{ order: Omit<Order, 'paymentResult'> }) => {
     return (
         <>
             <Script
-              src="https://static-na.payments-amazon.com/checkout.js"
+              src="https://duoiqv61nq97o.cloudfront.net/checkout.js"
               strategy="afterInteractive" // Load after the page becomes interactive
               onLoad={showJSButton ? loadApayJSButton : loadApayButton}
             />
@@ -182,3 +157,60 @@ const AmazonPayButton = ({ order }:{ order: Omit<Order, 'paymentResult'> }) => {
 }
  
 export default AmazonPayButton;
+function onInitResponse(event: any) {
+    console.log(event);
+    (window as any).shippingAddress = event['shippingAddress']
+    return {
+        "totalShippingAmount": {
+            "amount": "0",
+            "currencyCode": "JPY"
+        },
+        "totalBaseAmount": {
+            "amount": "5",
+            "currencyCode": "JPY"
+        },
+        "totalTaxAmount": {
+            "amount": "0",
+            "currencyCode": "JPY"
+        },
+        "totalDiscountAmount": {
+            "amount": "4",
+            "currencyCode": "JPY"
+        },
+        "totalChargeAmount": {
+            "amount": "1",
+            "currencyCode": "JPY"
+        },
+        "deliveryOptions": [{
+            "id": "ups_shipping-02-25.11",
+            "price": {
+                "amount": "5",
+                "currencyCode": "JPY"
+            },
+            "shippingMethod": {
+                "shippingMethodName": "shipping-method-name-onInitCheckout",
+                "shippingMethodCode": "shipping-method-code-onInitCheckout"
+            },
+            "shippingEstimate": [{
+                "timeUnit": "HOUR",
+                "value": 2
+            }],
+            "isDefault": true
+        }, {
+            "id": "ups_shipping-02-25.11-v2",
+            "price": {
+                "amount": "5",
+                "currencyCode": "JPY"
+            },
+            "shippingMethod": {
+                "shippingMethodName": "shipping-method-name-onInitCheckout-v2",
+                "shippingMethodCode": "shipping-method-code-onInitCheckout-v2"
+            },
+            "shippingEstimate": [{
+                "timeUnit": "HOUR",
+                "value": 2
+            }],
+            "isDefault": false
+        }]
+    };
+}
