@@ -146,7 +146,7 @@ const AmazonPayButton = ({ order }:{ order: Omit<Order, 'paymentResult'> }) => {
     return (
         <>
             <Script
-              src="https://duoiqv61nq97o.cloudfront.net/checkout.js"
+              src="https://static-fe.payments-amazon.com/checkout.js"
               strategy="afterInteractive" // Load after the page becomes interactive
               onLoad={showJSButton ? loadApayJSButton : loadApayButton}
             />
