@@ -19,6 +19,7 @@ import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import StripePayment from "./stripe-payment";
 import AmazonPayButton from "./amazon-pay-button";
+import AmazonPayButtonBuyNow from "@/components/amazon-pay/amazon-pay-button-buy-now";
 
 const OrderDetailsTable = ({ order, paypalClientId, isAdmin, stripeClientSecret }: { 
     order: Omit<Order, 'paymentResult'>; 
@@ -246,6 +247,12 @@ const OrderDetailsTable = ({ order, paypalClientId, isAdmin, stripeClientSecret 
                                     <AmazonPayButton 
                                         order={order}
                                     />
+                                </div>
+                            )}
+                            {/* AmazonPay */}
+                            { !isPaid && paymentMethod === 'AmazonPay-BuyNow' && (
+                                <div>
+                                    <AmazonPayButtonBuyNow />
                                 </div>
                             )}
                             { /* Cash on Delivery */}
