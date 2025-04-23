@@ -27,9 +27,9 @@ const AmazonPayButton = ({ order }:{ order: Omit<Order, 'paymentResult'> }) => {
                 (window as any).amazon.Pay.renderButton('#AmazonPayButton', {
                     merchantId: process.env.NEXT_PUBLIC_AMAZON_MERCHANT_ID,
                     publicKeyId: process.env.NEXT_PUBLIC_AMAZON_PUBLIC_KEY_ID,
-                    ledgerCurrency: 'JPY',
+                    ledgerCurrency: 'USD',
                     sandbox: true,
-                    checkoutLanguage: 'ja_JP',
+                    checkoutLanguage: 'en_US',
                     productType: 'PayAndShip',
                     placement: 'Cart',
                     buttonColor: 'Gold',
@@ -47,7 +47,7 @@ const AmazonPayButton = ({ order }:{ order: Omit<Order, 'paymentResult'> }) => {
     return (
         <>
             <Script
-              src="https://static-fe.payments-amazon.com/checkout.js"
+              src="https://static-na.payments-amazon.com/checkout.js"
               strategy="afterInteractive" // Load after the page becomes interactive
               onLoad={loadApayButton}
             />
