@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import { Order } from "@/types";
+import { useRouter } from "next/navigation";
 import Script from "next/script";
 
-const AmazonPayButtonBuyNow = () => {
+const AmazonPayButtonBuyNow = ({ order }:{ order: Omit<Order, 'paymentResult'> }) => {
+    const router = useRouter();
     const loadApayJSButton = () => {
         if (typeof window !== "undefined" && (window as any).amazon) {
             (window as any).amazon.Pay.renderJSButton('#AmazonPayButton', {
@@ -17,7 +20,7 @@ const AmazonPayButtonBuyNow = () => {
                 checkoutSessionConfig: {
                     "storeId": process.env.NEXT_PUBLIC_AMAZON_STORE_ID,
                     "paymentDetails": {
-                        "paymentIntent": "Confirm"
+                        "paymentIntent": "Authorize"
                     },
                 },
                 onInitCheckout: function (event: any) {
@@ -26,16 +29,30 @@ const AmazonPayButtonBuyNow = () => {
                 onShippingAddressSelection: function (event: any) {
                     return onShippingAddressResponse(event);
                 },
-                onCompleteCheckout: function (event: any) {
+                onCompleteCheckout: async function (event: any) {
+                    console.log("onCompleteCheckout");
                     console.log(event);
+                    // const res = await updateOrderToPaid({
+                    //     orderId: order.id,
+                    //     paymentResult: {
+                    //         id: event.payload.chargeId || event.payload.chargePermissionId || event.payload.checkoutSessionId || '',
+                    //         status: 'COMPLETED',
+                    //         email_address: eventData?.buyer?.email || 'test@test.com',
+                    //         pricePaid: order.totalPrice
+                    //     }
+                    // });
+                    // console.log(res);
+                    router.push(`/order/${order.id}`);
                 },
                 onDeliveryOptionSelection: function (event: any) {
                     return onDeliveryOptionResponse(event);
                 },
                 onCancel: function (event: any) {
+                    console.log("onCancel");
                     console.log(event);
                 },
                 onError: function (event: any) {
+                    console.log("onError");
                     console.log(event);
                 }
             })

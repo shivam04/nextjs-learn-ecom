@@ -252,7 +252,9 @@ const OrderDetailsTable = ({ order, paypalClientId, isAdmin, stripeClientSecret 
                             {/* AmazonPay */}
                             { !isPaid && paymentMethod === 'AmazonPay-BuyNow' && (
                                 <div>
-                                    <AmazonPayButtonBuyNow />
+                                    <AmazonPayButtonBuyNow 
+                                        order={order}
+                                    />
                                 </div>
                             )}
                             { /* Cash on Delivery */}
