@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
-import { Order } from "@/types";
+import { Order, SavedWalletObject } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 import { PayPalButtons, PayPalScriptProvider, usePayPalScriptReducer } from "@paypal/react-paypal-js";
@@ -20,12 +20,14 @@ import { Button } from "@/components/ui/button";
 import StripePayment from "./stripe-payment";
 import AmazonPayButton from "./amazon-pay-button";
 import AmazonPayButtonBuyNow from "@/components/amazon-pay/amazon-pay-button-buy-now";
+import AmazonPayButtonSavedWallet from "@/components/amazon-pay/amazon-pay-saved-wallet";
 
-const OrderDetailsTable = ({ order, paypalClientId, isAdmin, stripeClientSecret }: { 
+const OrderDetailsTable = ({ order, paypalClientId, isAdmin, stripeClientSecret, savedWallet }: { 
     order: Omit<Order, 'paymentResult'>; 
     paypalClientId: string;
     isAdmin: boolean;
     stripeClientSecret: string | null;
+    savedWallet: SavedWalletObject | null;
 }) => {
 
     const { toast } = useToast();
@@ -254,6 +256,15 @@ const OrderDetailsTable = ({ order, paypalClientId, isAdmin, stripeClientSecret 
                                 <div>
                                     <AmazonPayButtonBuyNow 
                                         order={order}
+                                    />
+                                </div>
+                            )}
+                            {/* AmazonPay SavedWallet*/}
+                            { !isPaid && paymentMethod === 'AmazonPay-SavedWallet' && (
+                                <div>
+                                    <AmazonPayButtonSavedWallet 
+                                        order={order}
+                                        savedWallet={savedWallet}
                                     />
                                 </div>
                             )}

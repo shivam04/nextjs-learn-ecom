@@ -1,4 +1,5 @@
 import { updateOrderToPaid } from "@/lib/actions/order.action";
+import { updateUserSavedWalletDetails } from "@/lib/actions/savedwallet.actions";
 import { formatError } from "@/lib/utils";
 import getPrivateKey from "@/utils/awsSecretsManager";
 import Client from '@amazonpay/amazon-pay-api-sdk-nodejs';
@@ -38,6 +39,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
                     pricePaid: payload["chargeAmount"]
                 }
             });
+
+            if (checkoutSessionObject.chargePermissionType === 'PaymentMethodOnFile' && checkoutSessionObject.chargePermissionId) {
+                await updateUserSavedWalletDetails(checkoutSessionObject.chargePermissionId);
+            }
 
             return NextResponse.json({
                 ok: true,

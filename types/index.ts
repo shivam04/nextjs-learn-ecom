@@ -7,7 +7,8 @@ import {
     insertOrderSchema, 
     insertOrderItemSchema, 
     paymentResultSchema, 
-    insertReviewSchema } from "@/lib/validators";
+    insertReviewSchema,
+    savedWalletSchema } from "@/lib/validators";
 
 export type Product = z.infer<typeof insertProductSchema> & {
     id: string;
@@ -73,4 +74,8 @@ export type CheckoutSessionObject = {
     buyer?: CheckoutBuyer;
     paymentPreferences?: CheckoutPaymentPreferences[],
     webCheckoutDetails?: WebCheckoutDetails,
+    chargePermissionId?: string;
+    chargePermissionType?: string;
 }
+
+export type SavedWalletObject = z.infer<typeof savedWalletSchema>;

@@ -24,7 +24,7 @@ export const shippingAddressDefaultValues = {
 }
 
 export const PAYMENT_METHODS = process.env.PAYMENT_METHODS 
-    ? process.env.PAYMENT_METHODS.split(', ') : ['PayPal', 'Stripe', 'CashOnDelivery', 'AmazonPay', 'AmazonPay-BuyNow']
+    ? process.env.PAYMENT_METHODS.split(', ') : ['PayPal', 'Stripe', 'CashOnDelivery', 'AmazonPay', 'AmazonPay-BuyNow', 'AmazonPay-SavedWallet']
 export const DEFAULT_PAYMENT_METHOD = process.env.DEFAULT_PAYMENT_METHOD || 'PayPal';
 
 
@@ -57,7 +57,8 @@ export const reviewFormDefaultValues = {
 
 export enum AMAZON_PAY_CHECKOUT_PAGE {
     REVIEW_PAGE = 'reviewPage',
-    RESULT_PAGE = 'resultPage'
+    RESULT_PAGE = 'resultPage',
+    SAVED_WALLET_PAGE = 'savedWalletPage',
 }
 
 export const SENDER_EMAIL = process.env.SENDER_EMAIL || "onboarding@resend.dev"

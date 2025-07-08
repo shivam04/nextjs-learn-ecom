@@ -6,6 +6,7 @@ import Link from "next/link";
 import CredentialsSignInForm from "./credentials-signin-form";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import AmazonPaySignInAndSetupButton from "@/components/amazon-pay/amazon-pay-signin-setup-button";
 
 export const metadata: Metadata = {
     title: 'Sign In'
@@ -47,6 +48,7 @@ const SignInPage = async (props: {
                    <CredentialsSignInForm /> 
                 </CardContent>
             </Card>
+            <AmazonPaySignInAndSetupButton />
         </div>
     );
 }

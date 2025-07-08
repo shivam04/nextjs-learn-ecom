@@ -2,9 +2,10 @@ import { getOrderById } from "@/lib/actions/order.action";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import OrderDetailsTable from "./order-details-table";
-import { ShippingAddress } from "@/types";
+import { SavedWalletObject, ShippingAddress } from "@/types";
 import { auth } from "@/auth";
 import Stripe from "stripe";
+import { getSavedWalletDetails } from "@/lib/actions/savedwallet.actions";
 
 export const metadata: Metadata = {
     title: 'Order Details'
@@ -20,6 +21,14 @@ const OrderDetailsPage = async (props: {
     if (!order) notFound();
 
     const session = await auth();
+
+    const userId = session?.user?.id || '';
+
+    const savedwallet = await getSavedWalletDetails(userId);
+
+    const savedwalletObject = savedwallet as SavedWalletObject | null;
+
+    console.log('savedwalletObj:', savedwalletObject);
 
     let client_secret = null;
 
@@ -49,6 +58,7 @@ const OrderDetailsPage = async (props: {
         stripeClientSecret={client_secret}
         paypalClientId={process.env.PAYPAL_CLIENT_ID || 'sb'} 
         isAdmin={ session?.user?.role === 'admin' || false }
+        savedWallet={savedwalletObject}
         />
     );
 }

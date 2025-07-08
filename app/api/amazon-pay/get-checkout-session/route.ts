@@ -18,6 +18,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const testPayClient = new Client.WebStoreClient(config);
     const response = await testPayClient.getCheckoutSession(amazonCheckoutSessionId);
+    console.log("Checkout Session Response:", JSON.stringify(response.data));
 
     return NextResponse.json({
         checkoutSessionObject: response.data

@@ -48,17 +48,30 @@ export async function signUpUser(prevState: unknown, formData: FormData) {
             confirmPassword: formData.get('confirmPassword')
         });
 
+        const chargePermissionId = formData.get('chargePermissionId') as string;
+
         const plainPassword = user.password;
 
         user.password = hashSync(user.password, 10);
 
-        await prisma.user.create({
+        const userDetails = await prisma.user.create({
             data: {
                 name: user.name,
                 password: user.password,
                 email: user.email
             }
         });
+
+        if (chargePermissionId) {
+            await prisma.savedWallet.upsert({
+                    where: { userId: userDetails.id },
+                    update: { chargePermissionId: chargePermissionId },
+                    create: {
+                        chargePermissionId: chargePermissionId,
+                        userId: userDetails.id
+                    }
+            });
+        }
 
         await signIn('credentials', {
             email: user.email,
@@ -83,6 +96,16 @@ export async function getUserById(userId: string) {
     });
 
     if (!user) throw new Error('User not found');
+    return user;
+}
+
+// Get User by email
+export async function getUserByEmail(email: string) {
+    const user = await prisma.user.findFirst({
+        where: { email: email }
+    });
+
+    if (!user) return null;
     return user;
 }
 

@@ -140,3 +140,8 @@ export const insertReviewSchema = z.object({
         .min(1, 'Rating must be atleast 1')
         .max(5, 'Rating must be atmost 5')
 });
+
+export const savedWalletSchema = z.object({
+    chargePermissionId: z.string().min(1, 'Charge permission id is required'),
+    userId: z.string().min(1, 'UserId is required'),
+});
