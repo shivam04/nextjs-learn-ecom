@@ -58,6 +58,7 @@ const AmazonPayButtonBuyNow = ({ order }:{ order: Omit<Order, 'paymentResult'> }
             })
         }
     }
+    console.log("AmazonPayButtonBuyNow rendered");
     return (
         <>
             <Script
@@ -123,6 +124,9 @@ function onInitResponse(event: any) {
             "shippingEstimate": [{
                 "timeUnit": "HOUR",
                 "value": 2
+            }, {
+                "timeUnit": "HOUR",
+                "value": 5
             }],
             "isDefault": true
         }, {
@@ -132,12 +136,15 @@ function onInitResponse(event: any) {
                 "currencyCode": "USD"
             },
             "shippingMethod": {
-                "shippingMethodName": "shipping-method-name-onInitCheckout",
-                "shippingMethodCode": "shipping-method-code-onInitCheckout"
+                "shippingMethodName": "shipping-method-name-onInitCheckout-v2",
+                "shippingMethodCode": "shipping-method-code-onInitCheckout-v2"
             },
             "shippingEstimate": [{
                 "timeUnit": "HOUR",
                 "value": 2
+            }, {
+                "timeUnit": "HOUR",
+                "value": 5
             }],
             "isDefault": false
         }],
