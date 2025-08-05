@@ -21,6 +21,7 @@ import StripePayment from "./stripe-payment";
 import AmazonPayButton from "./amazon-pay-button";
 import AmazonPayButtonBuyNow from "@/components/amazon-pay/amazon-pay-button-buy-now";
 import AmazonPayButtonSavedWallet from "@/components/amazon-pay/amazon-pay-saved-wallet";
+import AmazonPayDecoupleButton from "@/components/amazon-pay/amazon-pay-decouple-button";
 
 const OrderDetailsTable = ({ order, paypalClientId, isAdmin, stripeClientSecret, savedWallet }: { 
     order: Omit<Order, 'paymentResult'>; 
@@ -247,6 +248,14 @@ const OrderDetailsTable = ({ order, paypalClientId, isAdmin, stripeClientSecret,
                             { !isPaid && paymentMethod === 'AmazonPay' && (
                                 <div>
                                     <AmazonPayButton 
+                                        order={order}
+                                    />
+                                </div>
+                            )}
+                            {/* Decouple Button */}
+                            {!isPaid && paymentMethod === 'AmazonPay-Decouple' && (
+                                <div>
+                                    <AmazonPayDecoupleButton 
                                         order={order}
                                     />
                                 </div>
