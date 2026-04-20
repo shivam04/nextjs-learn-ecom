@@ -2,57 +2,74 @@ import { updateOrderToPaid } from "@/lib/actions/order.action";
 import { updateUserSavedWalletDetails } from "@/lib/actions/savedwallet.actions";
 import { formatError } from "@/lib/utils";
 import getPrivateKey from "@/utils/awsSecretsManager";
-import Client from '@amazonpay/amazon-pay-api-sdk-nodejs';
+import Client from "@amazonpay/amazon-pay-api-sdk-nodejs";
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest): Promise<NextResponse> {
-    const { payload, amazonCheckoutSessionId, orderId, email } = await req.json();
-    console.log("PayLoad:", payload);
-    console.log("amazonCheckoutSessionId:", amazonCheckoutSessionId);
-    console.log("orderId:", orderId);
-    console.log("email:", email);
+  const { payload, amazonCheckoutSessionId, orderId, email } = await req.json();
+  console.log("PayLoad:", payload);
+  console.log("amazonCheckoutSessionId:", amazonCheckoutSessionId);
+  console.log("orderId:", orderId);
+  console.log("email:", email);
 
-    const privateKey = await getPrivateKey();
-    
-        const config = {
-            publicKeyId: process.env.NEXT_PUBLIC_AMAZON_PUBLIC_KEY_ID,
-            privateKey: privateKey,
-            region: 'us',
-            sandbox: true,
-            algorithm: 'AMZN-PAY-RSASSA-PSS-V2' 
-        };
-    
-        const testPayClient = new Client.WebStoreClient(config);
+  const privateKey = await getPrivateKey();
 
-        try {
-            const response = await testPayClient.completeCheckoutSession(amazonCheckoutSessionId, payload);
+  const config = {
+    publicKeyId: process.env.NEXT_PUBLIC_AMAZON_PUBLIC_KEY_ID,
+    privateKey: privateKey,
+    region: "us",
+    sandbox: true,
+    algorithm: "AMZN-PAY-RSASSA-PSS-V2",
+  };
 
-            const checkoutSessionObject = response.data;
+  const testPayClient = new Client.WebStoreClient(config);
 
-            // Update Order status
-            await updateOrderToPaid({
-                orderId: orderId,
-                paymentResult: {
-                    id: checkoutSessionObject.chargeId || checkoutSessionObject.chargePermissionId || checkoutSessionObject.checkoutSessionId || '',
-                    status: 'COMPLETED',
-                    email_address: email || 'test@test.com',
-                    pricePaid: payload["chargeAmount"]
-                }
-            });
+  try {
+    const response = await testPayClient.completeCheckoutSession(
+      amazonCheckoutSessionId,
+      payload,
+    );
 
-            if (checkoutSessionObject.chargePermissionType === 'PaymentMethodOnFile' && checkoutSessionObject.chargePermissionId) {
-                await updateUserSavedWalletDetails(checkoutSessionObject.chargePermissionId);
-            }
+    const checkoutSessionObject = response.data;
 
-            return NextResponse.json({
-                ok: true,
-                checkoutSessionObject: response.data
-            })
-        } catch(error) {
-            console.log("Error while calling update checkout session: ", formatError(error));
-            return NextResponse.json({
-                ok: false,
-                message: `Error Occured while calling update checkout Session: ${formatError(error)}`
-            })
-        }
+    // Update Order status
+    await updateOrderToPaid({
+      orderId: orderId,
+      paymentResult: {
+        id:
+          checkoutSessionObject.chargeId ||
+          checkoutSessionObject.chargePermissionId ||
+          checkoutSessionObject.checkoutSessionId ||
+          "",
+        status: "COMPLETED",
+        email_address: email || "test@test.com",
+        pricePaid: payload["chargeAmount"],
+      },
+    });
+
+    if (
+      checkoutSessionObject.chargePermissionType === "PaymentMethodOnFile" &&
+      checkoutSessionObject.chargePermissionId
+    ) {
+      await updateUserSavedWalletDetails(
+        checkoutSessionObject.chargePermissionId,
+      );
+    }
+
+    return NextResponse.json({
+      ok: true,
+      checkoutSessionObject: response.data,
+    });
+  } catch (error) {
+    console.log(
+      "Error while calling update checkout session: ",
+      formatError(error),
+    );
+    return NextResponse.json({
+      ok: false,
+      message: `Error Occured while calling update checkout Session: ${formatError(error)}`,
+    });
+  }
 }

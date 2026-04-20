@@ -1,17 +1,23 @@
-import { Resend } from 'resend';
-import { SENDER_EMAIL, APP_NAME } from '@/lib/constants';
-import { Order } from '@/types';
-import PurchaseReceiptEmail from './purchase-receipt';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-require('dotenv').config();
+import { Resend } from "resend";
+import { SENDER_EMAIL, APP_NAME } from "@/lib/constants";
+import { Order } from "@/types";
+import PurchaseReceiptEmail from "./purchase-receipt";
 
-const resend = new Resend(process.env.RESEND_API_KEY as string)
+let resendClient: Resend | null = null;
+const getResend = () => {
+  if (!resendClient) {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) throw new Error("Missing RESEND_API_KEY environment variable");
+    resendClient = new Resend(apiKey);
+  }
+  return resendClient;
+};
 
 export const sendPurchaseReceipt = async ({ order }: { order: Order }) => {
-    await resend.emails.send({
-        from: `${APP_NAME}<${SENDER_EMAIL}>`,
-        to: order.user.email,
-        subject: `Order Confirmation ${order.id}`,
-        react: <PurchaseReceiptEmail order={order}/>
-    })
-}
+  await getResend().emails.send({
+    from: `${APP_NAME}<${SENDER_EMAIL}>`,
+    to: order.user.email,
+    subject: `Order Confirmation ${order.id}`,
+    react: <PurchaseReceiptEmail order={order} />,
+  });
+};
