@@ -95,7 +95,7 @@ function onInitResponse(event: any) {
         },
         "totalChargeAmount": {
             "amount": "1.00",
-            "currencyCode": "JPY"
+            "currencyCode": "USD"
         },
         "lineItems": [{
             "id": "id-of-the-item",
