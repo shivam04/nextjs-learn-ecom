@@ -7,15 +7,13 @@ import { getFeaturedProducts, getLatestProducts } from "@/lib/actions/product.ac
 
 const HomePage = async () => {
 
-  console.log(`NEXTAUTH_SECRET: ${process.env.NEXTAUTH_SECRET}`);
-
   const latestProducts = await getLatestProducts();
   const featuredProducts = await getFeaturedProducts();
 
   return (
     <>
-      { featuredProducts.length > 0 && <ProductCarousel data={featuredProducts} /> }
-      <ProductList data={latestProducts} title="Newest Arrivals"/>
+      {featuredProducts.length > 0 && <ProductCarousel data={featuredProducts} />}
+      <ProductList data={latestProducts} title="Newest Arrivals" />
       <ViewAllProductsButton />
       <DealCountDown />
       <IconBoxes />
@@ -23,4 +21,4 @@ const HomePage = async () => {
   )
 }
 
- export default HomePage;  
+export default HomePage;  
