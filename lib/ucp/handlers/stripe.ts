@@ -42,6 +42,7 @@ export async function createOrUpdatePaymentIntent(
   const created = await stripe.paymentIntents.create({
     amount,
     currency: session.totals.currency.toLowerCase(),
+    automatic_payment_methods: { enabled: true, allow_redirects: "never" },
     metadata: { ucpCheckoutSessionId: session.id },
   });
 
