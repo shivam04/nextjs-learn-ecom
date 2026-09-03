@@ -1,0 +1,66 @@
+{
+  "ucp_version": "2026-01-11",
+  "roles": ["business"],
+  "runtime": "nodejs",
+  "capabilities": {
+    "core": ["dev.ucp.shopping.checkout"],
+    "extensions": ["dev.ucp.shopping.order"]
+  },
+  "transports": ["rest", "mcp"],
+  "transport_priority": ["rest", "mcp"],
+  "payment_handlers": ["stripe"],
+  "features": {
+    "ap2_mandates": false,
+    "identity_linking": false,
+    "multi_destination_fulfillment": false
+  },
+  "domain": "nextjs-learn-ecom.vercel.app",
+  "existing_apis": {
+    "products": "/lib/actions/product.actions.ts",
+    "cart": "/lib/actions/cart.actions.ts",
+    "orders": "/lib/actions/order.action.ts",
+    "stripe_webhook": "/app/api/webhooks/stripe/route.ts"
+  },
+  "policy_urls": {
+    "privacy": "https://nextjs-learn-ecom.vercel.app/privacy",
+    "terms": "https://nextjs-learn-ecom.vercel.app/terms",
+    "refunds": "",
+    "shipping": ""
+  },
+  "scaffold_depth": "full",
+  "generated_files": [
+    "prisma/schema.prisma",
+    "lib/ucp/types/checkout.ts",
+    "lib/ucp/schemas/checkout.ts",
+    "lib/ucp/money.ts",
+    "lib/ucp/profile.ts",
+    "lib/ucp/response.ts",
+    "lib/ucp/negotiation.ts",
+    "lib/ucp/handlers/checkout.ts",
+    "lib/ucp/handlers/stripe.ts",
+    "lib/ucp/handlers/products.ts",
+    "lib/ucp/handlers/order.ts",
+    "lib/ucp/handlers/pricing.ts",
+    "lib/ucp/types/order.ts",
+    "app/.well-known/ucp/route.ts",
+    "app/api/ucp/checkout/route.ts",
+    "app/api/ucp/checkout/[id]/route.ts",
+    "app/api/ucp/orders/[id]/route.ts",
+    "app/api/mcp/[transport]/route.ts"
+  ],
+  "answers": {
+    "authentication_model": "session-based (NextAuth cookie/JWT for buyer identity when present, guest checkout otherwise)",
+    "webhook_config": {
+      "url": "/api/webhooks/stripe",
+      "events": ["charge.succeeded"]
+    }
+  },
+  "deployment": {
+    "platform": "vercel",
+    "region": "iad1",
+    "mcp": {
+      "enabled": true,
+      "max_duration": 60
+    }
+  }
+}
