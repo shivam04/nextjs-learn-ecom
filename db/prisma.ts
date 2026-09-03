@@ -86,6 +86,32 @@ export const prisma = new PrismaClient({ adapter }).$extends({
           return orderItem.price.toString();
         }
       }
+    },
+    ucpCheckoutSession: {
+      itemsPrice: {
+        needs: { itemsPrice: true },
+        compute(session) {
+          return session.itemsPrice.toString();
+        }
+      },
+      taxPrice: {
+        needs: { taxPrice: true },
+        compute(session) {
+          return session.taxPrice.toString();
+        }
+      },
+      shippingPrice: {
+        needs: { shippingPrice: true },
+        compute(session) {
+          return session.shippingPrice.toString();
+        }
+      },
+      totalPrice: {
+        needs: { totalPrice: true },
+        compute(session) {
+          return session.totalPrice.toString();
+        }
+      },
     }
   },
 });

@@ -146,7 +146,6 @@ export async function createCharge(order: Omit<Order, 'paymentResult'>, chargePe
         }
         
     } catch (error) {
-        console.log(JSON.stringify(error));
         console.error("Error creating charge:", formatError(error));
         return {
             success: false,
