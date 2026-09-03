@@ -160,6 +160,36 @@ model SavedWallet {
   user User @relation("UserToSavedWallet", fields: [userId], references: [id], onDelete: Cascade)
 }
 
+// Universal Commerce Protocol (UCP) checkout session.
+// Intentionally not related via FK to Order/User so UCP (agent-driven,
+// possibly guest) checkout flows don't require schema changes to those
+// existing models. `orderId` / `userId` are plain string references
+// populated once the session completes and a real Order/User row exists.
+model UcpCheckoutSession {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  status String @default("incomplete")
+  currency String @default("USD")
+  lineItems Json @default("[]") @db.Json
+  itemsPrice Decimal @default(0) @db.Decimal(12, 2)
+  taxPrice Decimal @default(0) @db.Decimal(12, 2)
+  shippingPrice Decimal @default(0) @db.Decimal(12, 2)
+  totalPrice Decimal @default(0) @db.Decimal(12, 2)
+  buyerEmail String?
+  buyerName String?
+  buyerPhone String?
+  shippingAddress Json? @db.Json
+  paymentHandlerId String?
+  paymentIntentId String?
+  paymentStatus String @default("pending")
+  userId String? @db.Uuid
+  orderId String? @db.Uuid
+  messages Json @default("[]") @db.Json
+  capabilities Json @default("[]") @db.Json
+  expiresAt DateTime @db.Timestamp(6)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt
+}
+
 /**
 px prisma init
 npx prisma generate whenver change in this file.

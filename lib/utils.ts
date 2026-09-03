@@ -28,6 +28,26 @@ export function formatError(error: any) {
   } else if (error.name === 'PrismaClientKnownRequestError' && error.code === 'P2002') {
     const field = error.meta?.target ? error.meta.target[0] : 'Field';
     return `${field.charAt(0).toUpperCase() + field.slice(1)} already exists`;
+  } else if (
+    error.name === 'PrismaClientInitializationError' ||
+    error.name === 'PrismaClientKnownRequestError' ||
+    error.name === 'PrismaClientRustPanicError' ||
+    error.name === 'PrismaClientUnknownRequestError'
+  ) {
+    // Prisma error classes don't expose message/stack as own-enumerable
+    // properties, so a plain JSON.stringify(error) collapses to something
+    // like {"clientVersion":"6.3.0"}. Log the real details server-side so
+    // the actual DB failure (e.g. connection refused, auth failure) is
+    // visible, and return a safe generic message to the caller.
+    console.error('Prisma error:', {
+      name: error.name,
+      code: error.code,
+      errorCode: error.errorCode,
+      message: error.message,
+      meta: error.meta,
+      stack: error.stack,
+    });
+    return 'A database error occurred. Please try again later.';
   } else {
     // Handle Other Errors
     return typeof error.message === 'string' 
