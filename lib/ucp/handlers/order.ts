@@ -90,10 +90,10 @@ export async function getUcpOrder(
 
   const events = [];
   if (order.isPaid && order.paidAt) {
-    events.push({ type: "processing", occurred_at: order.paidAt.toISOString() });
+    events.push({ type: "processing", occurred_at: new Date(order.paidAt).toISOString() });
   }
   if (order.isDelivered && order.deliveredAt) {
-    events.push({ type: "delivered", occurred_at: order.deliveredAt.toISOString() });
+    events.push({ type: "delivered", occurred_at: new Date(order.deliveredAt).toISOString() });
   }
 
   const ucpOrder: UCPOrder = {
