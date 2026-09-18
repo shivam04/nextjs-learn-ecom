@@ -50,6 +50,36 @@ export async function createOrUpdatePaymentIntent(
 }
 
 /**
+ * Create and immediately confirm a PaymentIntent from a shared payment
+ * token (SPT) — a payment credential already granted by the buyer's
+ * wallet/credential provider and handed to the business by the platform
+ * (see `completeCheckout`'s `payment_method_id` field, which carries the
+ * SPT when the `stripe` handler is used this way).
+ */
+export async function createPaymentSPT(
+  spt: string,
+  amount: number,
+  currency: string,
+  metadata: Record<string, string> = {}
+): Promise<Stripe.PaymentIntent> {
+  const stripe = getStripeClient();
+  // `shared_payment_granted_token` is not part of the public Stripe
+  // TypeScript definitions (v18.0.0) — it's an undocumented/private-beta
+  // param, hence the cast rather than a typed field.
+  const intent = await stripe.paymentIntents.create({
+    amount,
+    currency: currency.toLowerCase(),
+    payment_method_data: {
+      shared_payment_granted_token: spt,
+    } as unknown as Stripe.PaymentIntentCreateParams.PaymentMethodData,
+    confirm: true,
+    metadata,
+  });
+
+  return intent;
+}
+
+/**
  * Confirm a PaymentIntent using a payment method id supplied by the buyer's
  * agent/platform (the `payment_data.payment_method_id` field of
  * ucp_complete_checkout / POST .../checkout/{id} action=complete).

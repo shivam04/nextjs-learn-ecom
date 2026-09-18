@@ -37,10 +37,7 @@ import type {
 import { resolveLineItems } from "./products";
 import { calcTotals } from "./pricing";
 import { fromMinorUnits, toMinorUnits } from "../money";
-import {
-  createOrUpdatePaymentIntent,
-  confirmPaymentIntent,
-} from "./stripe";
+import { createPaymentSPT } from "./stripe";
 
 const SESSION_TTL_MS = 30 * 60 * 1000; // 30 minutes
 
@@ -318,118 +315,111 @@ export async function completeCheckout(
   const lineItems = existing.lineItems as unknown as LineItem[];
   const totals = calcTotals(lineItems, existing.currency);
 
+  if (!paymentData.payment_method_id) {
+    // No shared payment token (SPT) supplied yet — nothing to confirm
+    // against, since createPaymentSPT creates and confirms in one step.
+    const row = await prisma.ucpCheckoutSession.update({
+      where: { id },
+      data: {
+        status: "requires_escalation",
+        paymentHandlerId: paymentData.handler_id,
+        messages: [
+          {
+            code: "payment_method_required",
+            severity: "requires_buyer_input",
+            message:
+              "A payment_method_id (shared payment token) is required to complete this checkout",
+          },
+        ] as unknown as Prisma.InputJsonValue,
+      },
+    });
+    return serialize(row);
+  }
+
   await prisma.ucpCheckoutSession.update({
     where: { id },
     data: { status: "complete_in_progress", capabilities: capabilities as unknown as Prisma.InputJsonValue },
   });
 
   try {
-    const intent = await createOrUpdatePaymentIntent(
-      { id: existing.id, totals },
-      existing.paymentIntentId
+    const stripeIntent = await createPaymentSPT(
+      paymentData.payment_method_id,
+      totals.grand_total,
+      totals.currency,
+      { ucpCheckoutSessionId: existing.id }
     );
 
-    let confirmed = intent;
-    if (paymentData.payment_method_id) {
-      const stripeIntent = await confirmPaymentIntent(
-        intent.id,
-        paymentData.payment_method_id
-      );
-      confirmed = { id: stripeIntent.id, client_secret: stripeIntent.client_secret };
+    if (stripeIntent.status === "succeeded") {
+      const orderId = await finalizeOrder(existing, lineItems);
 
-      if (stripeIntent.status === "succeeded") {
-        const orderId = await finalizeOrder(existing, lineItems);
+      // Reuse the existing order-finalization action instead of
+      // duplicating stock-decrement / isPaid / receipt-email logic.
+      await updateOrderToPaid({
+        orderId,
+        paymentResult: {
+          id: stripeIntent.id,
+          status: "COMPLETED",
+          email_address: existing.buyerEmail ?? "",
+          pricePaid: fromMinorUnits(totals.grand_total),
+        },
+      });
 
-        // Reuse the existing order-finalization action instead of
-        // duplicating stock-decrement / isPaid / receipt-email logic.
-        await updateOrderToPaid({
-          orderId,
-          paymentResult: {
-            id: stripeIntent.id,
-            status: "COMPLETED",
-            email_address: existing.buyerEmail ?? "",
-            pricePaid: fromMinorUnits(totals.grand_total),
-          },
-        });
-
-        const row = await prisma.ucpCheckoutSession.update({
-          where: { id },
-          data: {
-            status: "completed",
-            paymentStatus: "captured",
-            paymentIntentId: intent.id,
-            paymentHandlerId: paymentData.handler_id,
-            orderId,
-          },
-        });
-        return serialize(row);
-      }
-
-      if (
-        stripeIntent.status === "requires_action" ||
-        stripeIntent.status === "requires_confirmation"
-      ) {
-        const row = await prisma.ucpCheckoutSession.update({
-          where: { id },
-          data: {
-            status: "requires_escalation",
-            paymentStatus: "pending",
-            paymentIntentId: intent.id,
-            paymentHandlerId: paymentData.handler_id,
-            messages: [
-              {
-                code: "payment_requires_action",
-                severity: "requires_buyer_input",
-                message:
-                  "Additional authentication is required to complete this payment",
-              },
-            ] as unknown as Prisma.InputJsonValue,
-          },
-        });
-        const session = serialize(row);
-        session.payment.client_secret = confirmed.client_secret ?? undefined;
-        return session;
-      }
-
-      // Payment failed outright.
       const row = await prisma.ucpCheckoutSession.update({
         where: { id },
         data: {
-          status: "ready_for_complete",
-          paymentStatus: "failed",
-          paymentIntentId: intent.id,
-          messages: [
-            {
-              code: "payment_failed",
-              severity: "recoverable",
-              message: `Payment could not be completed (status: ${stripeIntent.status})`,
-            },
-          ] as unknown as Prisma.InputJsonValue,
+          status: "completed",
+          paymentStatus: "captured",
+          paymentIntentId: stripeIntent.id,
+          paymentHandlerId: paymentData.handler_id,
+          orderId,
         },
       });
       return serialize(row);
     }
 
-    // No payment_method_id supplied yet — return the intent so the
-    // caller's platform/wallet can collect payment details and retry.
+    if (
+      stripeIntent.status === "requires_action" ||
+      stripeIntent.status === "requires_confirmation"
+    ) {
+      const row = await prisma.ucpCheckoutSession.update({
+        where: { id },
+        data: {
+          status: "requires_escalation",
+          paymentStatus: "pending",
+          paymentIntentId: stripeIntent.id,
+          paymentHandlerId: paymentData.handler_id,
+          messages: [
+            {
+              code: "payment_requires_action",
+              severity: "requires_buyer_input",
+              message:
+                "Additional authentication is required to complete this payment",
+            },
+          ] as unknown as Prisma.InputJsonValue,
+        },
+      });
+      const session = serialize(row);
+      session.payment.client_secret = stripeIntent.client_secret ?? undefined;
+      return session;
+    }
+
+    // Payment failed outright.
     const row = await prisma.ucpCheckoutSession.update({
       where: { id },
       data: {
-        status: "requires_escalation",
-        paymentIntentId: intent.id,
-        paymentHandlerId: paymentData.handler_id,
+        status: "ready_for_complete",
+        paymentStatus: "failed",
+        paymentIntentId: stripeIntent.id,
         messages: [
           {
-            code: "payment_method_required",
-            severity: "requires_buyer_input",
-            message: "A payment_method_id is required to complete this checkout",
+            code: "payment_failed",
+            severity: "recoverable",
+            message: `Payment could not be completed (status: ${stripeIntent.status})`,
           },
         ] as unknown as Prisma.InputJsonValue,
       },
     });
-    const session = serialize(row);
-    session.payment.client_secret = confirmed.client_secret ?? undefined;
-    return session;
+    return serialize(row);
   } catch (error) {
     await prisma.ucpCheckoutSession.update({
       where: { id },
